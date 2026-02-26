@@ -19,7 +19,7 @@ SSH_SERVICE="ssh"
 
 
 # Comprovar si ssh esta instalat i instal·lar-lo
-if ! dpkg -s "$SSH_PACKET" &>/dev/null; then 
+if ! dpkg -l "$SSH_PACKET" | grep -q '^ii'; then 
 
     # APT UPDATE
     if ! apt-get -qq update; then
@@ -40,15 +40,19 @@ fi
 
 
 # Arrancar el servei (start i enable)
-if ! systemctl is-enabled -q "$SSH"; then
-    if ! systemctl enable "$SSH"; then
+if ! systemctl is-enabled -q "$SSH_SERVICE"; then
+    if ! systemctl enable "$SSH_SERVICE"; then
 	echo -e "$WARNING No s'ha pogut establir el servei ssh a enable."
     fi	
+
+    echo -e "$SUCCESS El servei ssh s'ha establert a enable."
 fi
 
-if ! systemctl is-active -q "$SSH"; then
-    if ! systemctl start "$SSH"; then
+if ! systemctl is-active -q "$SSH_SERVICE"; then
+    if ! systemctl start "$SSH_SERVICE"; then
 	echo -e "$ERROR No s'ha pogut arrancar el servei ssh"
 	exit 2
     fi
+    
+    echo -e "$SUCCESS S'ha arrancat el servei ssh"
 fi
