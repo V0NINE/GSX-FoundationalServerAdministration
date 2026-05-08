@@ -1,58 +1,49 @@
-#!/bin/bash
-# start_ssh.sh - 
-#
-# PURPOSE:
-#
+#!/usr/bin/env bash
+# setup_ssh_server.sh
 
-# Definició de colors per millorar la llegibilitat de l'output dels scripts
-GREEN="\e[32m"
-YELLOW="\e[33m"
-RED="\e[31m"
-RESET="\e[0m"
+source ./script_message.sh
 
-ERROR="$RED[x]$RESET"
-WARNING="$YELLOW[!]$RESET"
-SUCCESS="$GREEN[+]$RESET"
+set -euo pipefail
 
 SSH_PACKET="openssh-server"
 SSH_SERVICE="ssh"
-
 
 # Comprovar si ssh esta instalat i instal·lar-lo
 if ! dpkg -l "$SSH_PACKET" | grep -q '^ii'; then 
 
     # APT UPDATE
     if ! apt-get -qq update; then
-	echo -e "$ERROR Ha sorgit un error actualitzant les llibreries d'APT"
-	exit 1
+        output_message ERROR "Ha sorgit un error actualitzant les llibreries d'APT"
+        exit 1
     fi
 
     # APT INSTALL
     if ! apt-get install -q -y "$SSH_PACKET"; then 
-	echo -e "$ERROR S'ha intentat instal·lar openssh-server, però ha sorgit algun error"
-	exit 1
+        output_message ERROR "S'ha intentat instal·lar openssh-server, però ha sorgit algun error"
+        exit 1
     fi
     
-    echo -e "$SUCCESS El paquet openssh-server s'ha instal·lat correctament"
+    output_message SUCCESS "El paquet openssh-server s'ha instal·lat correctament"
 else
-    echo -e "$WARNING El paquet openssh-server ja està instal·lat"
+    output_message WARNING "El paquet openssh-server ja està instal·lat"
 fi
 
 
 # Arrancar el servei (start i enable)
 if ! systemctl is-enabled -q "$SSH_SERVICE"; then
     if ! systemctl enable "$SSH_SERVICE"; then
-	echo -e "$WARNING No s'ha pogut establir el servei ssh a enable."
+        output_message WARNING "No s'ha pogut establir el servei ssh a enable."
+	exit 2
     fi	
 
-    echo -e "$SUCCESS El servei ssh s'ha establert a enable."
+    output_message SUCCESS "El servei ssh s'ha establert a enable."
 fi
 
 if ! systemctl is-active -q "$SSH_SERVICE"; then
     if ! systemctl start "$SSH_SERVICE"; then
-	echo -e "$ERROR No s'ha pogut arrancar el servei ssh"
-	exit 2
+        output_message ERROR "No s'ha pogut arrancar el servei ssh"
+        exit 2
     fi
     
-    echo -e "$SUCCESS S'ha arrancat el servei ssh"
+    output_message SUCCESS "S'ha arrancat el servei ssh"
 fi

@@ -14,15 +14,8 @@
 #   1 - Syntax error in at least one user's sudoer file
 
 
-# Define colors for readable script output
-GREEN="\e[32m"
-YELLOW="\e[33m"
-RED="\e[31m"
-RESET="\e[0m"
-
-ERROR="$RED[x]$RESET"
-WARNING="$YELLOW[!]$RESET"
-SUCCESS="$GREEN[+]$RESET"
+# Import structured log messages script
+source ./script_message.sh
 
 EXIT=0
 
@@ -30,13 +23,13 @@ EXIT=0
 set -euo pipefail
 
 if [ $# -eq 0 ]; then
-    echo -e "$ERROR At least one username is required." >&2
+    output_message ERROR "At least one username is required."
     exit -1
 fi
 
 cleanup() {
     local f="$1"
-    echo -e "$WARNING Cleanup: removed $f."
+    output_message WARNING "Cleanup: removed $f."
     rm -f "$f"
 }
 
@@ -48,17 +41,17 @@ for user in "$@"; do echo
     # Ensure user exists and is not in sudo group or /etc/sudoers.d/
     # /----
     if ! id -un "$user"  &> /dev/null; then
-	echo -e "$WARNING User $user does not exist."
+	output_message WARNING "User $user does not exist."
 	continue
     fi
 
     if id -nG "$user" | grep -wq sudo; then
-	echo -e "$WARNING User $user is already in sudo group."
+	output_message WARNING "User $user is already in sudo group."
 	continue
     fi
 
     if [ -f "$FILE" ]; then
-	echo -e "$WARNING User $user is already in sudoers.d."
+	output_message WARNING "User $user is alreay in sudoers.d."
 	continue
     fi
     # \----
@@ -68,15 +61,15 @@ for user in "$@"; do echo
 
     trap "cleanup '$FILE'" ERR
 
-    echo "Adding $user..."
+    output_message INFO "Adding $user..."
 
     # Validate syntax, then add to /etc/sudoers.d
     if visudo -c -f "$FILE"; then
   	chmod 440 "$FILE"
-	echo -e "$SUCCESS User $user successfully added to sudoers."
+	output_message SUCCESS "User $user successfully added to sudoers."
 	trap - ERR    # Disable trap once file validated successfully
     else
-	echo -e "$ERROR Syntax error in $FILE" >&2
+	output_message ERROR "Syntax error in $FILE"
 	rm -f "$FILE"
 	EXIT=1
     fi
