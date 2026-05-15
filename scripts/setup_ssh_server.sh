@@ -12,13 +12,13 @@ SSH_SERVICE="ssh"
 if ! dpkg -l "$SSH_PACKET" | grep -q '^ii'; then 
 
     # APT UPDATE
-    if ! apt-get -qq update; then
+    if ! apt-get -qq update >/dev/null; then
         output_message ERROR "Ha sorgit un error actualitzant les llibreries d'APT"
         exit 1
     fi
 
     # APT INSTALL
-    if ! apt-get install -q -y "$SSH_PACKET"; then 
+    if ! apt-get install -q -y "$SSH_PACKET" >/dev/null; then 
         output_message ERROR "S'ha intentat instal·lar openssh-server, però ha sorgit algun error"
         exit 1
     fi
