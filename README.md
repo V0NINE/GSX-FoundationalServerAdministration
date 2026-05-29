@@ -77,6 +77,4 @@ Expected VirtualBox forwarding rule:
 - Setup, verification and backup scripts included.
 - Design choices and troubleshooting procedures documented.
 
-## Important security note
 
-This repository must be private. Do not commit passwords, private SSH keys, backup archives, VM images, logs containing secrets or personal data.
