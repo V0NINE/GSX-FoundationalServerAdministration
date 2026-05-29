@@ -1,53 +1,65 @@
-#!/bin/bash
-# configure_ssh_access.sh
-
-source ./script_message.sh
+#!/usr/bin/env bash
+# configure_ssh_access.sh - Configure SSH access mode
+#
+# USAGE:
+#   sudo ./configure_ssh_access.sh --mode bootstrap
+#   sudo ./configure_ssh_access.sh --mode secure
+#
+# MODES:
+#   bootstrap: password login allowed, useful before keys are installed
+#   secure:    password login disabled, key-based access only
+#
+# IDEMPOTENCE:
+#   Safe to run multiple times. If config is already correct, exits 0.
 
 set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/script_message.sh"
 
+require_root
 
 MODE=""
 CONF_DIR="/etc/ssh/sshd_config.d"
-CONF_FILE="$CONF_DIR/50-custom.conf"
-NEW_CONF=""
+CONF_FILE="$CONF_DIR/50-gsx-custom.conf"
 
-# Mostra per pantalla l'ús correcte del script.
 usage() {
     output_message INFO "USAGE: $0 --mode <bootstrap|secure>"
     exit 1
 }
 
-# Genera els paràmetres de configuració segons el mode desitjat.
 generate_config() {
     case "$1" in
         bootstrap)
-            cat <<EOF
+            cat <<'EOF'
+# Managed by GSX Week 1 scripts
 PermitRootLogin prohibit-password
 PasswordAuthentication yes
 PubkeyAuthentication yes
+KbdInteractiveAuthentication no
+UsePAM yes
 EOF
             ;;
         secure)
-            cat <<EOF
+            cat <<'EOF'
+# Managed by GSX Week 1 scripts
 PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
+KbdInteractiveAuthentication no
+UsePAM yes
 EOF
             ;;
-	*)
-	    output_message ERROR "Unknown --moooooooooode $1"
-	    return 1
+        *)
+            output_message ERROR "Unknown mode: $1"
+            return 1
             ;;
     esac
 }
 
-# Es necessita almenys un paràmetre d'entrada
 if [ $# -lt 1 ]; then
     usage
 fi
 
-# Si el primer paràmetre és --mode s'aplica el mode indicat.
-# Si és qualsevol altra cosa és salta a 'usage'.
 case "$1" in
     --mode)
         shift
@@ -62,37 +74,27 @@ case "$1" in
         ;;
 esac
 
-# Comprova que la variable MODE no és buida.
 if [ -z "$MODE" ]; then
-    output_message ERROR "Error: --mode is required."
+    output_message ERROR "--mode is required."
     usage
 fi
 
+NEW_CONF="$(generate_config "$MODE")"
 
-# Si el MODE no és secure ni bootstrap, crida usage() 
-if ! NEW_CONF="$(generate_config "$MODE")"; then
-    usage
-fi
-
-# Es comprova que la configuració que es vol aplicar sigui diferent a la actual.
-if [ -f "$CONF_FILE" ] && diff -q <(echo "$NEW_CONF") "$CONF_FILE" >/dev/null; then
-    output_message WARNING "La configuració actual ja està en mode $MODE. No s'aplica cap canvi."
-    exit 2
-fi
-
-
-# S'aplica la nova configuració al fitxer de configuracio /etc/ssh/sshd_config.d/50-custom.conf
 mkdir -p "$CONF_DIR"
-echo "$NEW_CONF" > "$CONF_FILE"
-output_message SUCCESS "El fitxer de configuració ha canviat a mode $MODE."
 
+if [ -f "$CONF_FILE" ] && diff -q <(printf "%s\n" "$NEW_CONF") "$CONF_FILE" >/dev/null; then
+    output_message WARNING "SSH configuration is already in $MODE mode. No changes applied."
+else
+    printf "%s\n" "$NEW_CONF" > "$CONF_FILE"
+    chmod 644 "$CONF_FILE"
+    output_message SUCCESS "SSH configuration written to $CONF_FILE."
+fi
 
 if ! sshd -t; then
-    output_message ERROR "La configuració SSH no és vàlida."
+    output_message ERROR "SSH configuration is invalid. Check $CONF_FILE."
     exit 2
 fi
 
-
-# Es reinicia el servei per fer efectiva la nova configuració.
 systemctl restart ssh
-output_message SUCCESS "El servidor SSH s'ha reiniciat correctament."
+output_message SUCCESS "SSH service restarted successfully."

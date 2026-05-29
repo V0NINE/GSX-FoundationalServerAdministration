@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
-
+# script_message.sh - Centralized script output helpers
 
 set -euo pipefail
 
-
-# Define colors for readable script output
 GREEN="\e[32m"
 YELLOW="\e[33m"
 RED="\e[31m"
+BLUE="\e[34m"
 RESET="\e[0m"
 
+INFO_PREFIX="${BLUE}[i]${RESET}"
 ERROR_PREFIX="${RED}[x]${RESET}"
 WARNING_PREFIX="${YELLOW}[!]${RESET}"
 SUCCESS_PREFIX="${GREEN}[+]${RESET}"
 
-
-# Print message with prefix based on level
 output_message() {
-    local level="$1"
+    local level="${1:-INFO}"
     shift || true
     local message="$*"
 
     case "$level" in
+        INFO)
+            echo -e "${INFO_PREFIX} ${message}"
+            ;;
         ERROR)
             echo -e "${ERROR_PREFIX} ${message}" >&2
             ;;
@@ -35,4 +36,11 @@ output_message() {
             echo "${message}"
             ;;
     esac
+}
+
+require_root() {
+    if [ "${EUID}" -ne 0 ]; then
+        output_message ERROR "This script must be run as root. Use sudo."
+        exit 1
+    fi
 }

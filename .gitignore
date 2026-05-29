@@ -1,2 +1,39 @@
-temp/
-generated_key
+# Secrets
+*.key
+*.pem
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.env
+.env
+secrets/
+private/
+
+# Backups and archives
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.7z
+backups/
+backup/
+*.bak
+
+# Logs
+*.log
+logs/
+
+# Virtual machines and disks
+*.vdi
+*.vmdk
+*.ova
+*.iso
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
