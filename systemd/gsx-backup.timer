@@ -1,0 +1,11 @@
+[Unit]
+Description=Run GSX administrative backup daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+RandomizedDelaySec=10min
+Unit=gsx-backup.service
+
+[Install]
+WantedBy=timers.target
