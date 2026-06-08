@@ -30,7 +30,7 @@ check_or_fail "GSX backup timer is" "enabled" systemctl is-enabled -q gsx-backup
 check_or_fail "GSX backup timer is" "active" systemctl is-active -q gsx-backup.timer
 check_or_fail "journald retention config" "exists" test -f /etc/systemd/journald.conf.d/gsx-retention.conf
 check_or_fail "Latest backup" "exists" test -e /var/backups/gsx/latest-week1-admin.tar.gz
-check "Latest backup archive is" "readable" tar -tzf /var/backups/gsx/latest-week1-admin.tar.gz
+check_or_fail "Latest backup archive is" "readable" tar -tzf /var/backups/gsx/latest-week1-admin.tar.gz
 
 if [ "$FAILED" -eq 0 ]; then
     output_message SUCCESS "Week 2 verification passed."
