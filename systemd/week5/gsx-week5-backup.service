@@ -1,0 +1,13 @@
+[Unit]
+Description=GSX Week 5 rsync snapshot backup
+Documentation=file:/opt/gsx-admin/docs/week5.md
+RequiresMountsFor=/srv/greendev-data
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/gsx-admin/scripts/week5/run_backup.sh /srv/greendev-data
+ExecStartPost=/opt/gsx-admin/scripts/week5/verify_backup_integrity.sh /srv/greendev-data/backups/snapshots/latest
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
