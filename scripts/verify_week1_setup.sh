@@ -58,13 +58,15 @@ if [[ "$SSH_MODE" != "bootstrap" && "$SSH_MODE" != "secure" ]]; then
 fi
 
 check_or_fail() {
-    local description="$1"
+    local start_description="$1"
+    local end_description="$2"
+    shift
     shift
 
     if "$@"; then
-        output_message SUCCESS "$description"
+        output_message SUCCESS "$start_description $end_description"
     else
-        output_message ERROR "$description"
+        output_message ERROR "$start_description not $end_description"
         FAILED=1
     fi
 }
@@ -99,18 +101,18 @@ if [ "$FIX" -eq 1 ]; then
     "$SCRIPT_DIR/configure_ssh_access.sh" --mode "$SSH_MODE"
 fi
 
-check_or_fail "Package sudo is installed" package_installed sudo
-check_or_fail "Package git is installed" package_installed git
-check_or_fail "Package openssh-server is installed" package_installed openssh-server
-check_or_fail "SSH service is enabled" service_enabled ssh
-check_or_fail "SSH service is active" service_active ssh
-check_or_fail "sshd configuration is valid" sshd -t
-check_or_fail "/opt/gsx-admin exists" dir_exists /opt/gsx-admin
-check_or_fail "/opt/gsx-admin/scripts exists" dir_exists /opt/gsx-admin/scripts
-check_or_fail "/opt/gsx-admin/configs exists" dir_exists /opt/gsx-admin/configs
-check_or_fail "/opt/gsx-admin/docs exists" dir_exists /opt/gsx-admin/docs
-check_or_fail "/var/backups/gsx exists" dir_exists /var/backups/gsx
-check_or_fail "Custom SSH config exists" file_exists /etc/ssh/sshd_config.d/50-gsx-custom.conf
+check_or_fail "Package sudo is" "installed" package_installed sudo
+check_or_fail "Package git is" "installed" package_installed git
+check_or_fail "Package openssh-server is" "installed" package_installed openssh-server
+check_or_fail "SSH service is" "enabled" service_enabled ssh
+check_or_fail "SSH service is" "active" service_active ssh
+check_or_fail "sshd configuration is" "valid" sshd -t
+check_or_fail "/opt/gsx-admin" "exists" dir_exists /opt/gsx-admin
+check_or_fail "/opt/gsx-admin/scripts" "exists" dir_exists /opt/gsx-admin/scripts
+check_or_fail "/opt/gsx-admin/configs" "exists" dir_exists /opt/gsx-admin/configs
+check_or_fail "/opt/gsx-admin/docs" "exists" dir_exists /opt/gsx-admin/docs
+check_or_fail "/var/backups/gsx" "exists" dir_exists /var/backups/gsx
+check_or_fail "Custom SSH config" "exists" file_exists /etc/ssh/sshd_config.d/50-gsx-custom.conf
 
 if id gsx >/dev/null 2>&1; then
     output_message SUCCESS "User gsx exists"
