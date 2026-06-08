@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # install_week1.sh - One-command Week 1 baseline installation
-#
+
 # USAGE:
 #   sudo ./install_week1.sh [--ssh-mode bootstrap|secure] [--sudo-user username]
 #
@@ -54,18 +54,18 @@ fi
 
 output_message INFO "Starting Week 1 baseline installation..."
 
-"$SCRIPT_DIR/setup_basic_packages.sh"
-"$SCRIPT_DIR/setup_admin_dirs.sh"
-"$SCRIPT_DIR/setup_ssh_server.sh"
-"$SCRIPT_DIR/configure_ssh_access.sh" --mode "$SSH_MODE"
+"$SCRIPT_DIR/week1/setup_basic_packages.sh"
+"$SCRIPT_DIR/week1/setup_admin_dirs.sh"
+"$SCRIPT_DIR/week1/setup_ssh_server.sh"
+"$SCRIPT_DIR/week1/configure_ssh_access.sh" --mode "$SSH_MODE"
 
 if id "$SUDO_USER_TO_ADD" >/dev/null 2>&1; then
-    "$SCRIPT_DIR/configure_sudoers.sh" "$SUDO_USER_TO_ADD" || true
+    "$SCRIPT_DIR/week1/configure_sudoers.sh" "$SUDO_USER_TO_ADD" || true
 else
     output_message WARNING "User $SUDO_USER_TO_ADD does not exist. Skipping sudoers setup."
 fi
 
-"$SCRIPT_DIR/backup_admin_data.sh"
+"$SCRIPT_DIR/week1/backup_admin_data.sh"
 "$SCRIPT_DIR/verify_week1_setup.sh" --ssh-mode "$SSH_MODE"
 
 output_message SUCCESS "Week 1 baseline installation completed."

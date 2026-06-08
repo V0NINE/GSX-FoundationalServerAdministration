@@ -15,7 +15,8 @@
 
 
 # Import structured log messages script
-source ./script_message.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../script_message.sh"
 
 EXIT=0
 

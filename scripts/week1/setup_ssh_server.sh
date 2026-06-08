@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # setup_ssh_server.sh
 
-source ./script_message.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../script_message.sh"
 
 set -euo pipefail
 

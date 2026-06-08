@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/script_message.sh"
+source "$SCRIPT_DIR/../script_message.sh"
 
 require_root
 
 ADMIN_SCRIPT_DIR="/opt/gsx-admin/scripts"
-BACKUP_SCRIPT_SRC="$SCRIPT_DIR/backup_admin_data.sh"
+BACKUP_SCRIPT_SRC="$SCRIPT_DIR/../backup_admin_data.sh"
 BACKUP_SCRIPT_DST="$ADMIN_SCRIPT_DIR/backup_admin_data.sh"
 
 SERVICE_FILE="/etc/systemd/system/gsx-backup.service"
@@ -14,7 +14,7 @@ TIMER_FILE="/etc/systemd/system/gsx-backup.timer"
 
 mkdir -p "$ADMIN_SCRIPT_DIR"
 
-install -m 0755 "$SCRIPT_DIR/script_message.sh" "$ADMIN_SCRIPT_DIR/script_message.sh"
+install -m 0755 "$SCRIPT_DIR/../script_message.sh" "$ADMIN_SCRIPT_DIR/script_message.sh"
 
 if [ -f "$BACKUP_SCRIPT_SRC" ]; then
     install -m 0755 "$BACKUP_SCRIPT_SRC" "$BACKUP_SCRIPT_DST"
