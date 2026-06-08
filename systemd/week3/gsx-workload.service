@@ -1,0 +1,19 @@
+[Unit]
+Description=GSX Week 3 resource-limited workload demo
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/gsx-admin/scripts/week3/signal_aware_workload.sh 4
+Restart=on-failure
+RestartSec=3s
+
+CPUQuota=50%
+MemoryMax=150M
+TasksMax=50
+
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
