@@ -71,16 +71,4 @@ Manual configuration is fragile. If the VM is lost or misconfigured, commands ty
 | Backup script | Done | `/var/backups/gsx/*.tar.gz` |
 | Documentation | Done | `docs/` folder |
 
-## Remaining manual evidence
 
-Before considering Week 1 complete, add screenshots or terminal output proving:
-
-```bash
-systemctl is-active ssh
-systemctl is-enabled ssh
-ssh -p 2222 gsx@127.0.0.1
-sudo whoami
-ls -ld /opt/gsx-admin /var/backups/gsx
-sudo ./verify_week1_setup.sh
-sudo ./backup_admin_data.sh
-```
