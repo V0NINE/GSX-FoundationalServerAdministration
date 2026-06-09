@@ -1,10 +1,18 @@
-# GSX Practical Assignment 1 — Foundational Server Administration
+# GSX — Foundational Server Administration
 
-## Project status
+## Project overview
 
-This repository contains the Week 1 baseline infrastructure for the GreenDevCorp Debian server used in the *Gestió de Sistemes i Xarxes* practical assignment.
+This repository contains the practical implementation for *Gestió de Sistemes i Xarxes — Practical Assignment 1: Foundational Server Administration*.
 
-The current objective is to make a minimal Debian VM administrable, repeatable and documented. The system is configured through scripts instead of manual one-off commands.
+The project simulates the infrastructure of GreenDevCorp, a small startup that needs a Debian server prepared for secure remote administration, service management, user collaboration, resource control, storage expansion, backups and recovery.
+
+The final system is designed to be:
+
+- usable;
+- reliable;
+- observable;
+- repeatable;
+- documented;
 
 ## Repository structure
 
@@ -12,69 +20,84 @@ The current objective is to make a minimal Debian VM administrable, repeatable a
 .
 ├── README.md
 ├── scripts/
-│   ├── script_message.sh
-│   ├── setup_basic_packages.sh
-│   ├── setup_admin_dirs.sh
-│   ├── setup_ssh_server.sh
-│   ├── configure_ssh_access.sh
-│   ├── configure_sudoers.sh
-│   ├── backup_admin_data.sh
-│   ├── verify_week1_setup.sh
-│   └── install_week1.sh
+│   ├── week2/
+│   ├── week3/
+│   ├── week4/
+│   └── week5/
+├── systemd/
+│   ├── week3/
+│   └── week5/
 └── docs/
     ├── week1.md
-    ├── ssh-access.md
-    ├── design-decisions.md
-    ├── security-policy.md
-    ├── backup-week1.md
-    ├── troubleshooting-week1.md
-    ├── reinstall-runbook.md
-    ├── testing-evidence.md
-    └── reflection-week1.md
+    ├── week2.md
+    ├── week3.md
+    ├── week4.md
+    ├── week5.md
+    ├── architecture-overview.md
+    ├── configuration-manual.md
+    ├── operational-runbooks.md
+    ├── troubleshooting-guide.md
+    ├── final-security-policy.md
+    ├── production-readiness-checklist.md
+    ├── design-rationale.md
+    ├── final-verification-evidence.md
+    ├── interview-prep.md
+    └── final-reflection.md
 ```
 
-## Quick start
+## Weekly scope
 
-Run these commands inside the Debian VM.
+| Week | Scope |
+|---|---|
+| Week 0 | Debian VM installation and clean snapshot |
+| Week 1 | SSH, sudo, Git and baseline automation |
+| Week 2 | Nginx, systemd services, timers and logs |
+| Week 3 | Process inspection, signals and resource limits |
+| Week 4 | Users, groups, permissions, ACLs and PAM limits |
+| Week 5 | Storage, backup, restore and optional NFS |
+| Week 6 | Final documentation, verification and reflection |
+
+## Final architecture summary
+
+The final system includes:
+
+- Debian server VM;
+- secure SSH administration;
+- Git-managed scripts and documentation;
+- Nginx managed by systemd;
+- automated backup timers;
+- journald logging and retention;
+- process and resource-control demonstrations;
+- developer users and group-based access control;
+- dedicated data/backup disk mounted at `/srv/greendev-data`;
+- rsync snapshot backups;
+- backup integrity verification;
+- restore tests;
+- optional NFS shared storage.
+
+## Main setup flow
+
+A new sysadmin should follow:
 
 ```bash
-cd scripts
-chmod +x *.sh
-
-# First run: use bootstrap mode until SSH key login has been tested.
-sudo ./install_week1.sh --ssh-mode bootstrap --sudo-user gsx
+git clone <REPOSITORY_URL>
+cd GSX-FoundationalServerAdministration
 ```
 
-After confirming that key-based SSH login works from the host machine:
+Then apply the week-specific setup scripts in order, following:
+
+```text
+docs/configuration-manual.md
+```
+
+## Final verification
+
+Minimum verification commands:
 
 ```bash
-sudo ./configure_ssh_access.sh --mode secure
-sudo ./verify_week1_setup.sh
+sudo ./scripts/week2/verify_week2_setup.sh
+sudo ./scripts/week3/verify_week3_setup.sh
+sudo ./scripts/week4/verify_week4_setup.sh
+sudo ./scripts/week5/verify_week5_setup.sh /srv/greendev-data
 ```
-
-## SSH access from host machine
-
-With VirtualBox NAT port forwarding:
-
-```bash
-ssh -p 2222 gsx@127.0.0.1
-```
-
-Expected VirtualBox forwarding rule:
-
-| Name | Protocol | Host IP | Host Port | Guest IP | Guest Port |
-|---|---|---:|---:|---|---:|
-| SSH | TCP | 127.0.0.1 | 2222 | empty/default | 22 |
-
-## Week 1 deliverables
-
-- Debian VM available locally.
-- SSH server installed, enabled and reachable from the host.
-- Sudo configured for administrative tasks.
-- Git repository used to track scripts and documentation.
-- Administrative directory structure created under `/opt/gsx-admin`.
-- Backup directory created under `/var/backups/gsx`.
-- Setup, verification and backup scripts included.
-- Design choices and troubleshooting procedures documented.
-
 
