@@ -6,7 +6,7 @@ source "$SCRIPT_DIR/../script_message.sh"
 require_root
 
 ADMIN_SCRIPT_DIR="/opt/gsx-admin/scripts"
-BACKUP_SCRIPT_SRC="$SCRIPT_DIR/../backup_admin_data.sh"
+BACKUP_SCRIPT_SRC="$SCRIPT_DIR/../week1/backup_admin_data.sh"
 BACKUP_SCRIPT_DST="$ADMIN_SCRIPT_DIR/backup_admin_data.sh"
 
 SERVICE_FILE="/etc/systemd/system/gsx-backup.service"
